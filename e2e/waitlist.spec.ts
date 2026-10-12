@@ -124,18 +124,20 @@ test('offline: saved on the device, sent by itself once back online', async ({ p
   await expect(page.locator('#bNo')).toHaveText(/№ \d{4}/);
 });
 
-test('sign-ups survive a reload and show up in the presenter list', async ({ page }) => {
-  const email = unique();
-  await openJoin(page);
-  await tapType(page, '#jEmail', email);
-  await page.locator('#jGo').tap();
-  await expect(page.locator('#jNet')).toContainText('Sent');
-  await page.goto('/#presenter');
-  await page.reload();
-  await page.locator('#mapBtn').tap();
-  await expect(page.locator('#room table.leads')).toContainText(email);
-  const stored = await page.evaluate(() => localStorage.getItem('sf60.leads.v1') ?? '');
-  expect(stored).toContain(email);
+test.describe('persistence', () => {
+  test.use({ serviceWorkers: 'block' }); // the offline worker has its own test; Linux WebKit crashes on reload with it
+  test('sign-ups survive a reload and show up in the presenter list', async ({ page, context }) => {
+    const email = unique();
+    await openJoin(page);
+    await tapType(page, '#jEmail', email);
+    await page.locator('#jGo').tap();
+    await expect(page.locator('#jNet')).toContainText('Sent');
+    const again = await context.newPage(); // a brand-new page load on the same device storage
+    await again.goto('/#presenter');
+    await again.locator('#mapBtn').tap();
+    await expect(again.locator('#room table.leads')).toContainText(email);
+    expect(await again.evaluate(() => localStorage.getItem('sf60.leads.v1') ?? '')).toContain(email);
+  });
 });
 
 test('next guest wipes the form and starts the pitch over', async ({ page }) => {

@@ -1,0 +1,85 @@
+/* base.css · deck shell: bar, slide grid, head, tape, chips, stamps, motion primitives 💅 */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; overflow: hidden; background: var(--floor); color: var(--paper); font: 400 var(--t-m)/1.25 var(--body);
+  overscroll-behavior: none; touch-action: manipulation; -webkit-user-select: none; user-select: none;
+  -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--hazard); outline-offset: 3px; }
+h2, h3, p { margin: 0; }
+
+/* stories bar */
+#bar { position: fixed; z-index: 5; top: 0; left: 0; right: 0; display: flex; align-items: center; gap: 8px; padding: calc(env(safe-area-inset-top, 0px) + 6px) var(--gut) 0; color: var(--barfg, var(--paper)); }
+body.lite #bar { --barfg: var(--ink); --barbg: rgba(17, 22, 25, .14); --barhi: var(--ink); }
+#prog { flex: 1; display: flex; gap: 4px; }
+#prog i { flex: 1; height: 6px; border-radius: 3px; background: var(--barbg, var(--veil)); transition: background .3s; }
+#prog i.done { background: var(--barhi, var(--hazard)); }
+#bar button, #clock { display: grid; place-items: center; min-width: 40px; height: 36px; padding: 0 10px; border: 0; border-radius: 8px; background: var(--barbg, var(--veil)); font: 700 var(--t-xs)/1 var(--body); font-variant-numeric: tabular-nums; }
+#clock { min-width: 52px; }
+#bar svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* slide = head / stage / tape */
+#deck { position: fixed; inset: 0; }
+.slide { position: absolute; inset: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 1.6vmin; padding: calc(var(--bar) + 2.2vmin) var(--gut) 0; overflow: hidden; visibility: hidden; background: var(--bg, var(--floor)); color: var(--fg, var(--paper)); }
+.slide.on { visibility: visible; animation: enter .3s ease-out both; }
+.slide.yellow { --bg: var(--hazard); --fg: var(--ink); --eye: var(--ink); --dimc: rgba(17, 22, 25, .74); }
+.slide.paper { --bg: var(--paper); --fg: var(--ink); --eye: var(--signal-ink); --dimc: var(--muted); }
+.head { display: grid; gap: .8vmin; align-content: start; }
+.eye { font: 900 var(--t-s)/1 var(--stencil); letter-spacing: .14em; text-transform: uppercase; color: var(--eye, var(--hazard)); }
+.head h2 { max-width: 28ch; font: 900 var(--t-l)/.94 var(--display); letter-spacing: .01em; text-wrap: balance; }
+.hero .head h2 { font-size: var(--t-xl); }
+.sub { max-width: 52ch; font-size: var(--t-m); color: var(--dimc, var(--dim)); text-wrap: balance; }
+.stage { container-type: size; display: grid; place-items: center; min-height: 0; }
+.box { position: relative; width: min(100cqw, 160cqh); aspect-ratio: 16 / 10; font-size: min(2.4cqw, 3.84cqh); line-height: 1.2; } /* 2.4% of the box width, measured on the stage */
+.abs { position: absolute; left: var(--x); top: var(--y); width: var(--w, auto); height: var(--h, auto); }
+
+/* the cliffhanger tape */
+.tape { position: relative; display: flex; align-items: center; gap: 2vmin; margin: 0 calc(-1 * var(--gut)); padding: 1.5vmin calc(var(--gut) + 7vmin) calc(1.5vmin + env(safe-area-inset-bottom, 0px)); background: var(--tbg, var(--hazard)); color: var(--tfg, var(--ink)); font: 900 var(--t-m)/1.1 var(--display); letter-spacing: .03em; text-transform: uppercase; }
+.tape::before, .tape::after { content: ""; position: absolute; top: 0; bottom: 0; width: 6vmin; background: repeating-linear-gradient(-45deg, var(--tfg, var(--ink)) 0 1.2vmin, transparent 1.2vmin 2.4vmin); }
+.tape::before { left: 0; }
+.tape::after { right: 0; }
+.tape .go { margin-left: auto; font-size: 1.6em; line-height: .8; }
+.on .tape .go { animation: nudge 1s ease-in-out infinite; }
+.slide.yellow .tape { --tbg: var(--ink); --tfg: var(--hazard); }
+
+/* shared bits */
+.chip { display: inline-flex; align-items: center; gap: .4em; padding: .42em .8em; border: .12em solid var(--line); border-radius: 999px; background: var(--panel); color: var(--paper); font-weight: 700; white-space: nowrap; }
+.chip.good { border-color: var(--pass); color: var(--pass); }
+.chip.bad { border-color: var(--signal); color: var(--signal-soft); }
+.stamp { padding: .12em .4em; border: .14em solid currentColor; border-radius: .2em; color: var(--signal); font: 900 2.6em/1.05 var(--stencil); letter-spacing: .04em; text-align: center; text-transform: uppercase; transform: rotate(var(--r, -7deg)); }
+.stamp.sm { font-size: 1.3em; }
+.stamp.solid { background: var(--ink); }
+.stamp.pass { color: var(--pass); font-size: 2.1em; }
+.slide.yellow .stamp { color: var(--ink); }
+.note, .illus { font-size: .62em; color: var(--dimc, var(--dim)); }
+.turn { display: none; }
+
+/* motion: .a + .pop/.rise/.fade/.slam, timed by --d, played only on the live slide 🎞️ */
+.on .a { animation: var(--an, fade) var(--du, .5s) var(--ez, cubic-bezier(.2, .9, .3, 1.25)) var(--d, 0s) both; }
+.pop { --an: pop; }
+.rise { --an: rise; }
+.fade { --an: fade; --ez: ease; }
+.slam { --an: slam; --du: .45s; }
+@keyframes enter { from { opacity: 0; transform: scale(1.015); } }
+@keyframes pop { from { opacity: 0; transform: scale(.3); } }
+@keyframes rise { from { opacity: 0; transform: translateY(40%); } }
+@keyframes fade { from { opacity: 0; } }
+@keyframes slam { 0% { opacity: 0; transform: scale(2.6) rotate(var(--r, -7deg)); } 70% { opacity: 1; transform: scale(.92) rotate(var(--r, -7deg)); } 100% { opacity: 1; transform: scale(1) rotate(var(--r, -7deg)); } }
+@keyframes bob { to { transform: translateY(-6%); } }
+@keyframes blink { 50% { opacity: .25; } }
+@keyframes nudge { 50% { transform: translateX(30%); } }
+@keyframes gone { to { opacity: 0; transform: scale(.5); } }
+@keyframes shown { to { opacity: 1; } }
+
+@media (orientation: portrait) and (max-width: 600px) {
+  .turn { display: block; position: fixed; z-index: 6; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 72px); margin: 0; padding: 6px 12px; border-radius: 999px; background: var(--ink); color: var(--hazard); font: 700 13px/1.2 var(--body); white-space: nowrap; pointer-events: none; transform: translateX(-50%); animation: fade .4s both, gone .5s 6s forwards; }
+}
+@media (max-height: 520px) {
+  :root { --t-l: 26px; --t-m: 15px; --t-s: 12px; --bar: calc(env(safe-area-inset-top, 0px) + 40px); }
+  .pick .chip { min-height: 30px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .on, .on *, .on *::before, .on *::after { animation-duration: 1ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
+}

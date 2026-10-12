@@ -1,0 +1,10 @@
+{
+  "name": "60-second-factory",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "build": "node deck/build.mjs",
+    "test": "node --test"
+  }
+}

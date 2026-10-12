@@ -1,0 +1,36 @@
+/* map.css · presenter-only story map 🗺️ */
+#map { position: fixed; z-index: 10; inset: 0; overflow: auto; padding: calc(env(safe-area-inset-top, 0px) + 16px) var(--gut) calc(env(safe-area-inset-bottom, 0px) + 32px); background: var(--floor); color: var(--paper); font: 400 16px/1.45 var(--body); touch-action: pan-y; -webkit-user-select: text; user-select: text; }
+.mwrap { display: grid; gap: 20px; max-width: 1120px; margin: 0 auto; }
+.mhead { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.mhead h2 { flex: 1; font: 900 clamp(30px, 5vw, 48px)/1 var(--display); }
+#map .chip { font-size: 14px; }
+#map button.chip { min-height: 40px; }
+.lanes { display: flex; flex-wrap: wrap; gap: 8px; }
+.lanes .chip { white-space: normal; }
+.curve { width: 100%; height: auto; overflow: visible; }
+.curve .area { fill: var(--glow-soft); }
+.curve .ln { fill: none; stroke: var(--hazard); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.curve .pt { cursor: pointer; }
+.curve circle { fill: var(--panel); stroke: var(--hazard); stroke-width: 3; }
+.curve .fast circle { fill: var(--hazard); }
+.curve .cur circle { stroke: var(--white); stroke-width: 6; }
+.curve text { font: 700 26px var(--body); fill: var(--paper); text-anchor: middle; }
+.curve .n { font-size: 18px; fill: var(--dim); }
+.nodes { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.node { position: relative; display: grid; align-content: start; gap: 6px; padding: 14px 14px 14px 52px; border: 2px solid var(--line); border-radius: 12px; background: var(--panel); cursor: pointer; }
+.node.cur { border-color: var(--hazard); }
+.nn { position: absolute; left: 12px; top: 12px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--line); font: 900 16px/1 var(--display); }
+.node.fast .nn { background: var(--hazard); color: var(--ink); }
+.node h3 { font: 900 22px/1.05 var(--display); letter-spacing: .02em; text-transform: uppercase; }
+.dev { font-size: 13px; font-weight: 700; letter-spacing: .06em; color: var(--hazard); text-transform: uppercase; }
+.say { font-size: 15px; }
+.hook { padding-top: 6px; border-top: 1px dashed var(--line); font-size: 14px; color: var(--dim); }
+.mwrap > h3 { font: 900 26px/1 var(--display); color: var(--hazard); text-transform: uppercase; }
+.faq { display: grid; gap: 4px; margin: 0; }
+.faq dt { margin-top: 8px; font-weight: 700; }
+.faq dd { margin: 0; color: var(--dim); }
+.tbl { overflow-x: auto; }
+.tbl table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 15px; }
+.tbl th, .tbl td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.tbl th { font: 900 14px/1.2 var(--body); letter-spacing: .06em; color: var(--hazard); text-transform: uppercase; }
+.tbl td:first-child { font-weight: 700; }

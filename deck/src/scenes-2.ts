@@ -1,6 +1,7 @@
 // scenes-2.ts · twists, safety net and the ask 🎯 secret exam, receipts, safety, your AI, clock out
 import type { Scene } from './scenes-1.ts';
 import { SECTOR_EMOJI } from './copy.ts';
+import { ROOMS } from './rooms-copy.ts';
 import { CONFIG } from './config.ts';
 import { bot, logo, qr, ring } from './art.ts';
 import { el, frame, mmss } from './frame.ts';
@@ -61,6 +62,8 @@ export const sOut: Scene = (c, s) => {
       `<div class="offer a pop" style="--d:${.3 + k * .2}s"><b>${e}</b><h3>${t}</h3><p>${d}</p></div>`).join('')) +
     el('contact a rise', [60, 2, 40, .6], `${logo()}<b>${CONFIG.name}</b>${CONFIG.line ? `<span>${CONFIG.line}</span>` : ''}` +
       `${code ? `<div class="qr">${code}</div>` : ''}<small>☕ ${c.s11.coffee}</small>`) +
-    el('again', [0, 86], `<button type="button" class="chip" data-reset>↺ ${c.ui.guest}</button>`),
+    el('doors', [0, 84, 100], `<button type="button" class="door-btn join" data-room="join">📝 ${ROOMS[s.lang].cta.join}</button>` +
+      `<button type="button" class="door-btn show" data-room="show">✨ ${ROOMS[s.lang].cta.show}</button>` +
+      `<button type="button" class="chip" data-reset>↺ ${c.ui.guest}</button>`),
     { cls: 'yellow', td: 1.2 });
 };

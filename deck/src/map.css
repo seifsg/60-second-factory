@@ -1,10 +1,10 @@
 /* map.css · presenter-only story map 🗺️ */
-#map { position: fixed; z-index: 10; inset: 0; overflow: auto; padding: calc(env(safe-area-inset-top, 0px) + 16px) var(--gut) calc(env(safe-area-inset-bottom, 0px) + 32px); background: var(--floor); color: var(--paper); font: 400 16px/1.45 var(--body); touch-action: pan-y; -webkit-user-select: text; user-select: text; }
+#room { position: fixed; z-index: 10; inset: 0; overflow: auto; padding: calc(env(safe-area-inset-top, 0px) + 16px) var(--gut) calc(env(safe-area-inset-bottom, 0px) + 32px); background: var(--floor); color: var(--paper); font: 400 16px/1.45 var(--body); touch-action: manipulation; -webkit-user-select: text; user-select: text; }
 .mwrap { display: grid; gap: 20px; max-width: 1120px; margin: 0 auto; }
 .mhead { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .mhead h2 { flex: 1; font: 900 clamp(30px, 5vw, 48px)/1 var(--display); }
-#map .chip { font-size: 14px; }
-#map button.chip { min-height: 40px; }
+#room .chip { font-size: 14px; }
+#room button.chip { min-height: 40px; }
 .lanes { display: flex; flex-wrap: wrap; gap: 8px; }
 .lanes .chip { white-space: normal; }
 .curve { width: 100%; height: auto; overflow: visible; }

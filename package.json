@@ -2,9 +2,17 @@
   "name": "60-second-factory",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=24" },
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "build": "node deck/build.mjs",
-    "test": "node --test"
+    "test": "node --test test/*.test.ts",
+    "dev": "node deck/build.mjs && wrangler dev",
+    "deploy": "node --test test/*.test.ts && node deck/build.mjs && wrangler deploy",
+    "leads": "node scripts/leads.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "4.149.0"
   }
 }

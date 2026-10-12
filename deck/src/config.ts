@@ -7,4 +7,5 @@ export const CONFIG = {
   line: 'calendly.com/seif-horizonlux', // under your name
   link: 'https://calendly.com/seif-horizonlux', // QR target: book a 30-minute call
   sector: 'gov' as Sector, // idea preselected on the factory line
+  api: 'https://pitch.seif.dev/api/waitlist', // waitlist endpoint for the offline file (the live site calls /api/waitlist)
 };

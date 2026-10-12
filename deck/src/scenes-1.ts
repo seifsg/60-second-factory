@@ -1,12 +1,12 @@
 // scenes-1.ts · hook, problem and reveal 🎬 clock in, the gag, the intern, more rules, the gate, the line
-import type { Copy, Sector } from './copy.ts';
+import type { Copy, Lang, Sector } from './copy.ts';
 import type { Pos } from './frame.ts';
 import { SECTORS, SECTOR_EMOJI, STATION_ICONS } from './copy.ts';
 import { CONFIG } from './config.ts';
 import { bot, laptop, logo, ring } from './art.ts';
 import { el, frame } from './frame.ts';
 
-export interface State { sector: Sector; secs: number }
+export interface State { sector: Sector; secs: number; lang: Lang }
 export type Scene = (c: Copy, s: State) => string;
 
 // 1 · promise + stakes: 60 s on a punch clock whose second hand really sweeps 60 s ⏱️

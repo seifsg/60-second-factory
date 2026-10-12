@@ -1,0 +1,19 @@
+// wrangler.jsonc · one Worker: serves the deck from static assets, runs /api/* for the waitlist ⚡
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sixty-second-factory",
+  "main": "server/index.ts",
+  "compatibility_date": "2026-09-01",
+  "account_id": "aec19438aa5dad6e262571889df0112c",
+  "workers_dev": true,
+  "routes": [{ "pattern": "pitch.seif.dev", "custom_domain": true }],
+  "assets": { "directory": "deck/dist/site", "binding": "ASSETS", "run_worker_first": ["/api/*"] },
+  "kv_namespaces": [{ "binding": "LEADS", "id": "a16caa8df57348c2b325d840f658b38b" }],
+  "ratelimits": [{ "name": "LIMITER", "namespace_id": "6060", "simple": { "limit": 10, "period": 60 } }],
+  "triggers": { "crons": ["*/30 * * * *"] },
+  "vars": {
+    "RELAY_URL": "https://softwarefactory.company/api/lead",
+    "ALLOWED_ORIGINS": "https://pitch.seif.dev,https://sixty-second-factory.seif-aec.workers.dev,null,http://localhost:8787,http://127.0.0.1:8787"
+  },
+  "observability": { "enabled": true }
+}

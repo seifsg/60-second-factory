@@ -1,5 +1,8 @@
 // map.ts · presenter-only story map 🗺️ attention curve, every beat, its hook and what to say
 import type { Copy } from './copy.ts';
+import type { Lead } from './leads.ts';
+import type { RoomCopy } from './rooms-copy.ts';
+import { esc } from './frame.ts';
 
 const LEVELS = [55, 85, 70, 66, 92, 80, 88, 84, 72, 74, 95];
 const MOODS = ['🙂', '😂', '😬', '😤', '🤯', '🤩', '😮', '🤝', '😌', '👍', '☕'];
@@ -18,7 +21,7 @@ const curve = (cur: number): string => {
     '</svg>';
 };
 
-export const mapHtml = (c: Copy, cur: number): string => {
+export const mapHtml = (c: Copy, cur: number, extra = ''): string => {
   const m = c.map, t = tapes(c);
   return `<div class="mwrap"><header class="mhead"><h2>🗺️ ${m.title}</h2>` +
     `<button type="button" class="chip" data-reset>↺ ${c.ui.guest}</button><button type="button" class="chip" data-close>✕ ${c.ui.close}</button></header>` +
@@ -26,7 +29,17 @@ export const mapHtml = (c: Copy, cur: number): string => {
     `<ol class="nodes">${m.nodes.map(([name, dev, say], k) => `<li class="node${mark(k, cur)}" data-jump="${k}">` +
       `<b class="nn">${k + 1}</b><h3>${MOODS[k]} ${name}</h3><p class="dev">${dev}</p><p class="say"><b>${m.say}</b> ${say}</p>` +
       (k < 10 ? `<p class="hook"><b>${m.hook} ↓</b> ${t[k]}</p>` : '') + '</li>').join('')}</ol>` +
-    `<h3>${m.faqT}</h3><dl class="faq">${m.faq.map(([q, a]) => `<dt>${q}</dt><dd>${a}</dd>`).join('')}</dl>` +
+    extra + `<h3>${m.faqT}</h3><dl class="faq">${m.faq.map(([q, a]) => `<dt>${q}</dt><dd>${a}</dd>`).join('')}</dl>` +
     `<h3>${m.vsT}</h3><div class="tbl"><table><thead><tr>${m.vsH.map(h => `<th>${h}</th>`).join('')}</tr></thead>` +
     `<tbody>${m.vs.map(r => `<tr>${r.map(x => `<td>${x}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+};
+
+// presenter-only: every sign-up saved on this tablet, with CSV export and a manual sync 📋
+export const leadsHtml = (r: RoomCopy, all: Lead[]): string => {
+  const L = r.leads;
+  const rows = all.slice().reverse().map(l => `<tr><td>${new Date(l.ts).toLocaleString()}</td><td>${esc(l.name)}</td><td>${esc(l.email)}</td>` +
+    `<td>${esc(l.company)}</td><td>${L.states[l.state]}${l.position ? ` #${l.position}` : ''}</td></tr>`).join('');
+  return `<h3>📋 ${L.h} (${all.length})</h3>` + (all.length ? `<div class="tbl"><table><tbody>${rows}</tbody></table></div>` : `<p class="rsub">${L.none}</p>`) +
+    `<div class="rfoot"><button type="button" class="chip" data-csv="copy">📋 ${L.copy}</button><button type="button" class="chip" data-csv="download">⬇️ ${L.download}</button>` +
+    `<button type="button" class="chip" data-sync>🔄 ${L.sync}</button></div>`;
 };

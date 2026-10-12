@@ -167,7 +167,7 @@ const FR: Copy = {
 };
 
 // French typography: thin no-break space before ? ! : ; » and after «, so marks never wrap alone 🇫🇷
-const nbsp = (v: unknown): unknown =>
+export const nbsp = (v: unknown): unknown =>
   typeof v === 'string' ? v.replace(/ ([?!:;»])/g, ' $1').replace(/« /g, '« ')
     : Array.isArray(v) ? v.map(nbsp)
       : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, nbsp(x)]))

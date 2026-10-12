@@ -5,7 +5,7 @@ import type { Lead } from '../deck/src/leads.ts';
 import { mergeLeads, nextDelay, outcome, payload, uid } from '../deck/src/leads.ts';
 
 const lead = (over: Partial<Lead> = {}): Lead => ({
-  id: 'a', name: 'Ada', email: 'ada@example.com', company: '', build: '', sector: 'gov', lang: 'en', source: 'pitch.seif.dev',
+  id: 'a', name: 'Ada', email: 'ada@example.com', phone: '', company: '', sector: 'gov', lang: 'en', source: 'pitch.seif.dev',
   ts: 1, state: 'queued', tries: 0, ...over,
 });
 
@@ -30,7 +30,7 @@ test('retries back off and cap at ten minutes', () => {
 });
 
 test('the payload carries only what the server needs', () => {
-  assert.deepEqual(Object.keys(payload(lead())).sort(), ['build', 'company', 'email', 'id', 'lang', 'name', 'sector', 'source']);
+  assert.deepEqual(Object.keys(payload(lead())).sort(), ['company', 'email', 'id', 'lang', 'name', 'phone', 'sector', 'source']);
 });
 
 test('ids are unique', () => {

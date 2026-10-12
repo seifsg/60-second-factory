@@ -37,9 +37,9 @@ export const mapHtml = (c: Copy, cur: number, extra = ''): string => {
 // presenter-only: every sign-up saved on this tablet, with CSV export and a manual sync 📋
 export const leadsHtml = (r: RoomCopy, all: Lead[]): string => {
   const L = r.leads;
-  const rows = all.slice().reverse().map(l => `<tr><td>${new Date(l.ts).toLocaleString()}</td><td>${esc(l.name)}</td><td>${esc(l.email)}</td>` +
-    `<td>${esc(l.company)}</td><td>${L.states[l.state]}${l.position ? ` #${l.position}` : ''}</td></tr>`).join('');
-  return `<h3>📋 ${L.h} (${all.length})</h3>` + (all.length ? `<div class="tbl"><table><tbody>${rows}</tbody></table></div>` : `<p class="rsub">${L.none}</p>`) +
+  const rows = all.slice().reverse().map(l => `<tr><td>${new Date(l.ts).toLocaleString()}</td><td>${esc(l.email)}</td><td>${esc(l.name)}</td>` +
+    `<td>${esc(l.phone ?? '')}</td><td>${esc(l.company)}</td><td>${L.states[l.state]}${l.position ? ` #${l.position}` : ''}</td></tr>`).join('');
+  return `<h3>📋 ${L.h} (${all.length})</h3>` + (all.length ? `<div class="tbl"><table class="leads"><tbody>${rows}</tbody></table></div>` : `<p class="rsub">${L.none}</p>`) +
     `<div class="rfoot"><button type="button" class="chip" data-csv="copy">📋 ${L.copy}</button><button type="button" class="chip" data-csv="download">⬇️ ${L.download}</button>` +
     `<button type="button" class="chip" data-sync>🔄 ${L.sync}</button></div>`;
 };

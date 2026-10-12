@@ -6,3 +6,5 @@ node_modules/
 .DS_Store
 Thumbs.db
 waitlist.csv
+test-results/
+playwright-report/

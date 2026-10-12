@@ -18,8 +18,8 @@ export const showHtml = (r: RoomCopy, c: Copy): string => {
     `<section class="pr"><header class="pr-head"><b>${s.prH}</b><span>${s.prMeta}</span></header><ol class="parts">` +
     s.parts.map(([emoji, title, quote, why], k) =>
       `<li class="part" style="--d:${(.1 + k * .12).toFixed(2)}s"><b class="tag">${k + 1}</b><h3>${emoji} ${title}</h3><blockquote>${quote}</blockquote><p class="why">${why}</p></li>`).join('') +
-    `</ol></section><h3 class="rh">${s.proofH}</h3><div class="strip">${PROOF.map((f, k) => polaroid(f, s.proofs[k], k)).join('')}</div>` +
+    `</ol></section><h3 class="rh">${s.proofH}</h3><div class="reel">${PROOF.map((f, k) => polaroid(f, s.proofs[k], k)).join('')}</div>` +
     `<h3 class="rh">${s.gifH}</h3><figure class="tv">${img('assets/journey.gif', s.gifH)}<figcaption>${s.gifNote}</figcaption></figure>` +
-    `<h3 class="rh">${s.builtH}</h3><p class="rsub">${s.builtNote}</p><div class="strip">${BUILT.map((f, k) => polaroid(f, s.shots[k], k, k === BUILT.length - 1)).join('')}</div>` +
+    `<h3 class="rh">${s.builtH}</h3><p class="rsub">${s.builtNote}</p><div class="reel">${BUILT.map((f, k) => polaroid(f, s.shots[k], k, k === BUILT.length - 1)).join('')}</div>` +
     `<div class="rfoot"><button type="button" class="door-btn join" data-room="join">📝 ${s.cta}</button><button type="button" class="chip" data-close>↩ ${s.back}</button></div>`;
 };

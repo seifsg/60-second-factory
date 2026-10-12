@@ -8,7 +8,7 @@ permissions:
   contents: read
 jobs:
   test-build-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
     steps:
@@ -22,3 +22,15 @@ jobs:
       - name: deploy
         if: github.ref == 'refs/heads/main' && env.CLOUDFLARE_API_TOKEN != ''
         run: npx wrangler deploy
+  tablets:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: npm ci
+      - run: npx playwright install --with-deps webkit chromium
+      - run: npx playwright test
+        env:
+          CI: '1'

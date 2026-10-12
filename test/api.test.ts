@@ -5,7 +5,7 @@ import { handle } from '../server/api.ts';
 import { retryNotifications } from '../server/relay.ts';
 import { ORIGIN, ctx, env, post, relay } from './fakes.ts';
 
-const ada = { id: 'id-1', name: 'Ada', email: 'Ada@Example.com', company: 'Engine Co', build: 'e-Permit portal', sector: 'gov', lang: 'en' };
+const ada = { id: 'id-1', name: 'Ada', email: 'Ada@Example.com', phone: '+216 20 123 456', company: 'Engine Co', sector: 'gov', lang: 'en' };
 const stored = (e: ReturnType<typeof env>, email: string) => JSON.parse(e.LEADS.m.get(`lead:${email}`) ?? 'null');
 
 test('preflight from the offline file gets CORS headers', async () => {
@@ -28,7 +28,7 @@ test('a sign-up is stored, numbered and emailed once', async () => {
   assert.equal(m.calls.length, 1);
   assert.equal(m.calls[0].body.form, 'setup');
   assert.equal(m.calls[0].body.cta, 'waitlist');
-  assert.match(m.calls[0].body.bottleneck, /waitlist \(#1\)[\s\S]*Name: Ada[\s\S]*e-Permit portal/);
+  assert.match(m.calls[0].body.bottleneck, /waitlist \(#1\)[\s\S]*Name: Ada[\s\S]*Phone: \+216 20 123 456/);
   assert.equal(stored(e, 'ada@example.com').notified, true);
 });
 
@@ -60,9 +60,17 @@ test('positions keep counting', async () => {
 });
 
 test('bad input gets 422 with field errors', async () => {
-  const r = await handle(post({ email: 'nope' }), env(), ctx());
+  const r = await handle(post({ email: 'nope', phone: 'call me' }), env(), ctx());
   assert.equal(r.status, 422);
-  assert.deepEqual(Object.keys((await r.json()).errors).sort(), ['email', 'name']);
+  assert.deepEqual(Object.keys((await r.json()).errors).sort(), ['email', 'phone']);
+});
+
+test('an email alone is a complete sign-up', async () => {
+  const e = env(), c = ctx(), m = relay();
+  const r = await handle(post({ email: 'solo@example.com' }), e, c, m.f);
+  await c.done();
+  assert.equal(r.status, 200);
+  assert.match(m.calls[0].body.bottleneck, /Name: \(not given\)/);
 });
 
 test('the honeypot answers ok and stores nothing', async () => {
@@ -123,8 +131,8 @@ test('the CSV export needs the admin token', async () => {
   const r = await get('Bearer top-secret-token');
   assert.equal(r.status, 200);
   const csv = await r.text();
-  assert.match(csv, /^position,email,name,/);
-  assert.match(csv, /1,ada@example\.com,"'=HYPERLINK\(""x""\)",Engine Co/);
+  assert.match(csv, /^position,email,name,phone,company,/);
+  assert.match(csv, /1,ada@example\.com,"'=HYPERLINK\(""x""\)",'\+216 20 123 456,Engine Co/);
 });
 
 test('health and unknown routes', async () => {

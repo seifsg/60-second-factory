@@ -8,6 +8,8 @@ A tap-through, 60-second pitch for the **AI Software Factory**: your coding agen
 - Tap right for next, the left edge to go back, or swipe. Keyboard and presentation clickers work.
 - The last slide opens two rooms: **Show me cool stuff** (a real factory PR taken apart, its proof, what it built) and **Join the waitlist** (a badge that fills in as guests type).
 - Presenter mode adds the 📈 story map: attention curve, what to say, objection answers, and the sign-ups saved on this device with CSV export.
+- **On a tablet, install it:** Safari › Share › Add to Home Screen (or Chrome › Install app). It opens full screen like an app, keyboards behave, and it keeps working offline after the first visit.
+- The waitlist asks only for an email; name, phone and company are optional. One-tap domains and a "did you mean" fix keep typos out.
 
 ## Waitlist: no sign-up gets lost
 
@@ -27,12 +29,13 @@ Needs Node 24 or newer.
 
 ```bash
 npm install
-npm test          # 31 tests: validation, storage, retries, CORS, CSV, client merge rules
+npm test          # 39 unit tests: validation, storage, retries, CORS, CSV, merge rules, CSS collisions
 npm run dev       # local Worker at http://localhost:8787 (local storage, never emails)
+npm run e2e       # the waitlist on iPad Safari (landscape + portrait) and Galaxy Tab Chrome, finger taps only
 npm run deploy    # tests, build, then wrangler deploy
 ```
 
-Every push runs the tests and the build in GitHub Actions. Add a `CLOUDFLARE_API_TOKEN` repository secret to deploy on every push to `main`.
+Every push runs the unit tests, the build and the tablet suite in GitHub Actions. `BASE_URL=https://pitch.seif.dev npm run e2e` smoke-tests production. Add a `CLOUDFLARE_API_TOKEN` repository secret to deploy on every push to `main`.
 
 ## Layout
 
@@ -42,6 +45,7 @@ deck/assets/ screenshots and the done-run recording (Framehouse sample, sample d
 server/      Cloudflare Worker: /api/waitlist, /api/leads (admin CSV), /api/health, cron
 shared/      email check and CSV writer used by both sides
 test/        node --test suites
+e2e/         Playwright tablet tests for the waitlist
 ```
 
 Your details (name, booking link, preselected sector, API URL) live in `deck/src/config.ts`.

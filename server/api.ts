@@ -27,8 +27,8 @@ const same = (a: string, b: string): boolean => {
 const leadsCsv = async (req: Request, env: Env): Promise<Response> => {
   const token = (req.headers.get('authorization') ?? '').replace(/^Bearer\s+/i, '');
   if (!env.ADMIN_TOKEN || !token || !same(token, env.ADMIN_TOKEN)) return json({ ok: false, error: 'Unauthorized.' }, 401);
-  const head = ['position', 'email', 'name', 'company', 'build', 'sector', 'lang', 'source', 'first', 'last', 'count', 'notified'];
-  const rows = (await all(env.LEADS)).map(l => [l.position, l.email, l.name, l.company, l.build, l.sector, l.lang, l.source, l.first, l.last, l.count, l.notified]);
+  const head = ['position', 'email', 'name', 'phone', 'company', 'build', 'sector', 'lang', 'source', 'first', 'last', 'count', 'notified'];
+  const rows = (await all(env.LEADS)).map(l => [l.position, l.email, l.name, l.phone ?? '', l.company, l.build, l.sector, l.lang, l.source, l.first, l.last, l.count, l.notified]);
   return new Response(toCsv(head, rows), { headers: { 'content-type': 'text/csv; charset=utf-8', 'content-disposition': 'attachment; filename="waitlist.csv"', 'cache-control': 'no-store' } });
 };
 

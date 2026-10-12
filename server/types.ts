@@ -15,5 +15,5 @@ export interface Env {
 export interface Ctx { waitUntil(p: Promise<unknown>): void }
 export type Fetch = typeof fetch;
 
-export interface NewLead { id: string; email: string; name: string; company: string; build: string; sector: string; lang: string; source: string }
+export interface NewLead { id: string; email: string; name: string; phone: string; company: string; build: string; sector: string; lang: string; source: string }
 export interface Lead extends Omit<NewLead, 'id'> { ids: string[]; position: number; first: string; last: string; count: number; notified: boolean }

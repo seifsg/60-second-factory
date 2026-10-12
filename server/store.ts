@@ -23,7 +23,7 @@ export const upsert = async (kv: KV, n: NewLead, now = new Date().toISOString())
   if (old) {
     const seen = old.ids.includes(id);
     const lead: Lead = {
-      ...old, name: n.name || old.name, company: n.company || old.company, build: n.build || old.build,
+      ...old, name: n.name || old.name, phone: n.phone || old.phone || '', company: n.company || old.company, build: n.build || old.build,
       sector: n.sector || old.sector, lang: n.lang || old.lang, last: now,
       count: old.count + (seen ? 0 : 1), ids: seen ? old.ids : [...old.ids, id].slice(-20),
     };

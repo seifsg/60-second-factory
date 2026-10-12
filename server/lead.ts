@@ -1,8 +1,9 @@
-// lead.ts · validates one sign-up and says no loudly (no silent truncation) 🧾
+// lead.ts · validates one sign-up and says no loudly (no silent truncation) 🧾 only the email is required
 import type { NewLead } from './types.ts';
 import { isEmail } from '../shared/email.ts';
+import { isPhone } from '../shared/phone.ts';
 
-const MAX = { id: 64, name: 100, company: 120, build: 300, sector: 20, lang: 5, source: 60 } as const;
+const MAX = { id: 64, name: 100, phone: 30, company: 120, build: 300, sector: 20, lang: 5, source: 60 } as const;
 type Field = keyof typeof MAX;
 
 // whitespace runs and control characters become one space, then trim; non-strings count as empty
@@ -20,7 +21,7 @@ export const check = (body: Record<string, unknown>): Check => {
   }
   const email = clean(body.email).toLowerCase();
   if (!isEmail(email)) errors.email = 'Enter a valid email address.';
-  if (!out.name) errors.name = 'Tell us your name.';
+  if (!errors.phone && !isPhone(out.phone)) errors.phone = 'Use digits, spaces and + for the phone.';
   if (Object.keys(errors).length) return { ok: false, errors };
   return { ok: true, lead: { ...out, email, id: out.id || crypto.randomUUID() } };
 };

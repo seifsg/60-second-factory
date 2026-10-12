@@ -4,7 +4,8 @@ import type { Scene } from './scenes-1.ts';
 import { COPY, SECTORS } from './copy.ts';
 import { CONFIG } from './config.ts';
 import { mmss } from './frame.ts';
-import { ROOM_KINDS, initRooms, openRoom, roomOpen } from './rooms.ts';
+import { ROOM_KINDS, initRooms, openRoom, refreshRoom, roomOpen } from './rooms.ts';
+import { canFullscreen, toggleFullscreen, wake } from './screen.ts';
 import { syncLeads } from './sync.ts';
 import { sClock, sOops, sIntern, sRules, sGate, sLine } from './scenes-1.ts';
 import { sExam, sProof, sSafe, sPlug, sOut } from './scenes-2.ts';
@@ -63,33 +64,12 @@ function toggleLang(): void {
   st.lang = st.lang === 'en' ? 'fr' : 'en';
   store.set('sf-lang', st.lang);
   render();
-  const r = roomOpen();
-  if (r) void openRoom(r);
+  void refreshRoom();
 }
 
 const toggleMap = (): void => { void openRoom(roomOpen() === 'map' ? null : 'map'); };
 
-// full screen + wake lock are bonuses: refused → silently skip 🙈
-type FsDoc = Document & { webkitFullscreenElement?: Element; webkitExitFullscreen?: () => void };
-type FsEl = HTMLElement & { webkitRequestFullscreen?: () => void };
-const root = document.documentElement as FsEl;
-const fsReq = root.requestFullscreen ?? root.webkitRequestFullscreen;
-fsBtn.hidden = !fsReq;
-function fullscreen(): void {
-  const d = document as FsDoc;
-  const on = d.fullscreenElement || d.webkitFullscreenElement;
-  try {
-    Promise.resolve(on ? (d.exitFullscreen ?? d.webkitExitFullscreen)?.call(d) : fsReq?.call(root)).catch(() => { /* frame said no */ });
-  } catch { /* unsupported here */ }
-}
-
-type Lock = { addEventListener(t: 'release', f: () => void): void };
-let lock: Lock | null = null;
-function wake(): void {
-  const wl = (navigator as Navigator & { wakeLock?: { request(t: 'screen'): Promise<Lock> } }).wakeLock;
-  if (lock || !wl) return;
-  wl.request('screen').then(l => { lock = l; l.addEventListener('release', () => { lock = null; }); }).catch(() => { /* no wake lock here */ });
-}
+fsBtn.hidden = !canFullscreen();
 
 // taps: left 28% = back, anywhere else = next · swipes both ways · chips and buttons do their own thing 👆
 let x0 = 0, y0 = 0, swiped = false;
@@ -112,7 +92,7 @@ const next = (): void => go(st.i + 1), back = (): void => go(st.i - 1);
 const KEYS: Record<string, () => void> = {
   ArrowRight: next, ArrowDown: next, PageDown: next, ' ': next, Enter: next,
   ArrowLeft: back, ArrowUp: back, PageUp: back,
-  Home: () => go(0), End: () => go(LAST), m: toggleMap, l: toggleLang, f: fullscreen, Escape: () => { void openRoom(null); },
+  Home: () => go(0), End: () => go(LAST), m: toggleMap, l: toggleLang, f: toggleFullscreen, Escape: () => { void openRoom(null); },
 };
 addEventListener('keydown', e => {
   const el = e.target as Element;
@@ -127,7 +107,7 @@ addEventListener('keydown', e => {
 });
 langBtn.addEventListener('click', toggleLang);
 $('mapBtn').addEventListener('click', toggleMap);
-fsBtn.addEventListener('click', fullscreen);
+fsBtn.addEventListener('click', toggleFullscreen);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') wake(); });
 setInterval(() => { clock.textContent = mmss(secs()); }, 500);
 
@@ -150,6 +130,10 @@ function start(d: Snap = {}): void {
   document.body.classList.toggle('presenter', presenter());
   render();
   void syncLeads(); // flush anything captured while offline last time
+  // offline after the first visit (served pages only; file:// and embedded frames skip it)
+  try {
+    if (/^https?:$/.test(location.protocol)) navigator.serviceWorker?.register('sw.js').catch(() => { /* not allowed here */ });
+  } catch { /* sandboxed frame */ }
 }
 initRooms({ copy: () => COPY[st.lang], lang: () => st.lang, slide: () => st.i, sector: () => st.sector, go, reset });
 hot?.snapshot?.(() => ({ i: st.i, lang: st.lang, sector: st.sector }));

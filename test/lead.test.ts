@@ -7,11 +7,17 @@ test('a valid sign-up is normalized', () => {
   const c = check({ name: '  Ada \n Lovelace ', email: ' ADA@Example.com ', company: 'Engine Co', id: 'abc', sector: 'gov', lang: 'fr' });
   assert.equal(c.ok, true);
   if (c.ok !== true) return;
-  assert.deepEqual(c.lead, { id: 'abc', name: 'Ada Lovelace', email: 'ada@example.com', company: 'Engine Co', build: '', sector: 'gov', lang: 'fr', source: '' });
+  assert.deepEqual(c.lead, { id: 'abc', name: 'Ada Lovelace', email: 'ada@example.com', phone: '', company: 'Engine Co', build: '', sector: 'gov', lang: 'fr', source: '' });
 });
 
-test('missing name and bad email are both reported', () => {
-  assert.deepEqual(check({ email: 'nope' }), { ok: false, errors: { email: 'Enter a valid email address.', name: 'Tell us your name.' } });
+test('only the email is required', () => {
+  assert.deepEqual(check({ email: 'nope' }), { ok: false, errors: { email: 'Enter a valid email address.' } });
+  assert.equal(check({ email: 'a@b.co' }).ok, true);
+});
+
+test('a phone is optional but checked', () => {
+  assert.equal(check({ email: 'a@b.co', phone: '+216 20 123 456' }).ok, true);
+  assert.deepEqual(check({ email: 'a@b.co', phone: 'call me' }), { ok: false, errors: { phone: 'Use digits, spaces and + for the phone.' } });
 });
 
 test('overlong fields are rejected, not cut', () => {
@@ -21,7 +27,7 @@ test('overlong fields are rejected, not cut', () => {
 
 test('non-string values count as empty', () => {
   const c = check({ name: 42, email: 'a@b.co', company: { evil: true } });
-  assert.deepEqual(c, { ok: false, errors: { name: 'Tell us your name.' } });
+  assert.ok(c.ok === true && c.lead.name === '' && c.lead.company === '');
 });
 
 test('the honeypot flags bots', () => {
@@ -29,6 +35,6 @@ test('the honeypot flags bots', () => {
 });
 
 test('a missing id gets a fresh one', () => {
-  const c = check({ name: 'Ada', email: 'a@b.co' });
+  const c = check({ email: 'a@b.co' });
   assert.ok(c.ok === true && /^[0-9a-f-]{36}$/.test(c.lead.id));
 });

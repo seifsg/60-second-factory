@@ -10,9 +10,11 @@
     "test": "node --test test/*.test.ts",
     "dev": "node deck/build.mjs && wrangler dev",
     "deploy": "node --test test/*.test.ts && node deck/build.mjs && wrangler deploy",
-    "leads": "node scripts/leads.mjs"
+    "leads": "node scripts/leads.mjs",
+    "e2e": "playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "1.45.3",
     "wrangler": "4.149.0"
   }
 }

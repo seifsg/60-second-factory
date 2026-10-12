@@ -3,7 +3,7 @@ import type { Lang, Sector } from './copy.ts';
 
 export type LeadState = 'queued' | 'sent' | 'rejected';
 export interface Lead {
-  id: string; name: string; email: string; company: string; build: string;
+  id: string; name: string; email: string; phone: string; company: string; build?: string;
   sector: Sector; lang: Lang; source: string; ts: number; state: LeadState; tries: number; position?: number;
 }
 
@@ -32,11 +32,11 @@ export const outcome = (status: number): LeadState =>
 export const nextDelay = (tries: number): number => Math.min(10 * 60_000, 15_000 * 2 ** Math.max(0, tries - 1));
 
 export const payload = (l: Lead): Record<string, string> =>
-  ({ id: l.id, name: l.name, email: l.email, company: l.company, build: l.build, sector: l.sector, lang: l.lang, source: l.source });
+  ({ id: l.id, name: l.name, email: l.email, phone: l.phone ?? '', company: l.company, sector: l.sector, lang: l.lang, source: l.source });
 
 // ids work even where crypto.randomUUID is missing (file:// is not a secure context everywhere)
 export const uid = (): string => globalThis.crypto?.randomUUID?.() ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
 
-export const LEAD_HEAD = ['time', 'name', 'email', 'company', 'build', 'sector', 'lang', 'state', 'position'];
+export const LEAD_HEAD = ['time', 'email', 'name', 'phone', 'company', 'sector', 'lang', 'state', 'position'];
 export const leadRows = (all: Lead[]): unknown[][] =>
-  all.map(l => [new Date(l.ts).toISOString(), l.name, l.email, l.company, l.build, l.sector, l.lang, l.state, l.position ?? '']);
+  all.map(l => [new Date(l.ts).toISOString(), l.email, l.name, l.phone ?? '', l.company, l.sector, l.lang, l.state, l.position ?? '']);

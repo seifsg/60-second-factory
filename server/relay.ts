@@ -8,7 +8,8 @@ export const relayBody = (l: Lead): Record<string, string> => ({
   company: l.company,
   bottleneck: [
     `Joined the 60-Second Factory waitlist (#${l.position}).`,
-    `Name: ${l.name}`,
+    `Name: ${l.name || '(not given)'}`,
+    l.phone && `Phone: ${l.phone}`,
     l.build && `Wants to build first: ${l.build}`,
     l.sector && `Sector picked in the pitch: ${l.sector}`,
     `Language: ${l.lang || 'en'} · Source: ${l.source || 'pitch'}`,
